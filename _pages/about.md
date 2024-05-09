@@ -11,20 +11,20 @@ profile:
   # more_info: >
   #   # <p>Huawei, Shanghai, China</p>
 
-news: false # includes a list of news items
+news: true # includes a list of news items
 selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false # includes social icons at the bottom of the page
 latest_posts: false
 ---
 
-Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
+Hello world!👋
 
-Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
+I'm a software engineer in [Huawei ADS](https://auto.huawei.com/cn/), Shanghai, China. Our team is focused on sensor fusion and localization for autonomous driving system (ADS).
 
-Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
+In 2022, I graduated from Xi'an Jiaotong University and got my master's degree in Machinical Engineer. Under the guidance of Prof. [Xuesong Mei](https://ieeexplore.ieee.org/author/37544593200), my research focused on Machine Vision and optical 3D measurement.
 
-# TODO
+Currently, I'm interested in all kinds of deep-learning related technologies, especially in autonomous driving, SLAM and 3D reconstruction. I hope that L4 autonomous driving comes true in the next decade.
 
-- remove "latest posts" in "about" page
+<!-- # TODO
 - add my two articles to publication page
-- choose between projects and repositories to show my github repos(projects)
+- choose between projects and repositories to show my github repos(projects) -->
