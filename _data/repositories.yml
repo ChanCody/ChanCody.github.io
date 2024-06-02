@@ -3,10 +3,7 @@ github_users:
   - alshedivat
 
 github_repos:
-  - alshedivat/al-folio
-  - twbs/bootstrap
-  - jekyll/jekyll
-  - jquery/jquery
-  - FortAwesome/Font-Awesome
-  - jpswalsh/academicons
-  - mathjax/MathJax
+  - WiiliamC/EmojiText
+  - WiiliamC/ImageEncryption
+  - WiiliamC/AutoInput-for-CompuSyn
+  - WiiliamC/Classification-of-Breast-Cancer
