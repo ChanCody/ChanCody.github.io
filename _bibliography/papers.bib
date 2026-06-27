@@ -3,113 +3,46 @@
 
 @string{aps = {American Physical Society,}}
 
-@book{einstein1920relativity,
-  title     = {Relativity: the Special and General Theory},
-  author    = {Einstein, Albert},
-  year      = {1920},
-  publisher = {Methuen & Co Ltd},
-  html      = {relativity.html}
+@article{chen2022voronoi,
+  title={A Voronoi-Diagram-based method for centerline extraction in 3D industrial line-laser reconstruction using a graph-centrality-based pruning algorithm},
+  author={Cheng Chen and Xuesong Mei and Dongxiang Hou and Zhengjie Fan and Wangwang Huang},
+  abstract={Three-dimensional (3D) line-laser scanning is a widely used 3D reconstruction technique in the industry. As a key procedure of 3D line-laser scanning, centerline extraction of laser stripes directly determines the accuracy of reconstructed 3D models. Because of the noise inside laser stripes, centerline extraction methods based on the gray distribution may provide biased results. In order to address this problem, a Voronoi-diagram-based method (VM) for centerline extraction, which can extract centerlines accurately under severe noises, is proposed. To solve the emerging problems when the Voronoi diagram is applied to line-laser stripes, a fast pruning algorithm based on the distribution of graph centrality is proposed, and two centerline extension algorithms based on least square fitting are developed. The experiments are performed on synthetic images and a line-laser 3D scanner to evaluate the method’s accuracy, robustness, and efficiency. The VM method is proved to have better accuracy and robustness than the traditional method. Simulation experiments show that the VM can extract centerlines from noisy images with an average accuracy of 0.35 pixels. Also, 3D reconstruction experiments of a Φ20-mm standard sphere demonstrate an average accuracy of 0.0282 mm. With four-thread acceleration, the proposed method can process images with a resolution of 2448 × 2048 pixels in 0.5 s. The accuracy and speed of the proposed method can be adjusted by changing the parameter related to the density of contour points, which makes this method flexible and widely applicable in applications with different requirements.},
+  journal={Optik},
+  volume={261},
+  year={2022},
+  month={July},
+  doi={10.1016/j.ijleo.2022.169179},
+  url={https://www.sciencedirect.com/science/article/abs/pii/S0030402622005344},
+  html={https://www.sciencedirect.com/science/article/abs/pii/S0030402622005344},
+  preview={voronoi_preview.png}
 }
 
-@book{einstein1956investigations,
-  bibtex_show = {true},
-  title       = {Investigations on the Theory of the Brownian Movement},
-  author      = {Einstein, Albert},
-  year        = {1956},
-  publisher   = {Courier Corporation},
-  preview     = {brownian-motion.gif}
+@article{chen2019tumor,
+  title={Effects of Image Augmentation and Dual-layer Transfer Machine Learning Architecture on Tumor Classification},
+  author={Cheng Chen and Christine Chen and Xuesong Mei and Chaoyang Chen and Guoxin Ni and Stephen Lemos},
+  abstract={Breast tumor (BT) is the second most common health problem for women. Traditional diagnosis methods can be very labor-intensive and time-consuming with the risk of making a wrong diagnosis. Computer vision and imaging processing techniques using machine learning (ML) methods are emerging to aide in clinical diagnosis. Some machine learning methods have yielded an accuracy of 85% using a single-layer classifier. In this study Inception-V3, a two-layer classifier of transfer machine learning tool was used for image processing with enhancement technologies and for the classification of breast tumor histopathological types. Results showed that image augmentation with dual-layer transfer machine learning algorithms yielded an accuracy of 95.6% in identification of breast tumor pathologic types, which was higher than previously reported methods in the literature. Different image preprocessing methods, dataset preparing methods, and classifier architectures were also studied to identify the optimal algorithm. Results showed that multiple-layer processing algorithms using color images, instead of black and white images, yielded a better accuracy in histopathological type classification.},
+  journal={ICCPR '19: Proceedings of the 2019 8th International Conference on Computing and Pattern Recognition},
+  pages={282--287},
+  year={2019},
+  month={October},
+  doi={10.1145/3373509.3373584},
+  url={https://dl.acm.org/doi/10.1145/3373509.3373584},
+  html={https://dl.acm.org/doi/10.1145/3373509.3373584},
+  preview={tumor_classify.png}
 }
 
-@article{einstein1950meaning,
-  abbr        = {AJP},
-  bibtex_show = {true},
-  title       = {The meaning of relativity},
-  author      = {Einstein, Albert and Taub, AH},
-  journal     = {American Journal of Physics},
-  volume      = {18},
-  number      = {6},
-  pages       = {403--404},
-  year        = {1950},
-  publisher   = {American Association of Physics Teachers}
-}
-
-@article{PhysRev.47.777,
-  abbr              = {PhysRev},
-  title             = {Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?},
-  author            = {Einstein*†, A. and Podolsky*, B. and Rosen*, N.},
-  abstract          = {In a complete theory there is an element corresponding to each element of reality. A sufficient condition for the reality of a physical quantity is the possibility of predicting it with certainty, without disturbing the system. In quantum mechanics in the case of two physical quantities described by non-commuting operators, the knowledge of one precludes the knowledge of the other. Then either (1) the description of reality given by the wave function in quantum mechanics is not complete or (2) these two quantities cannot have simultaneous reality. Consideration of the problem of making predictions concerning a system on the basis of measurements made on another system that had previously interacted with it leads to the result that if (1) is false then (2) is also false. One is thus led to conclude that the description of reality as given by a wave function is not complete.},
-  journal           = {Phys. Rev.},
-  location          = {New Jersey},
-  volume            = {47},
-  issue             = {10},
-  pages             = {777--780},
-  numpages          = {0},
-  year              = {1935},
-  month             = {May},
-  publisher         = aps,
-  doi               = {10.1103/PhysRev.47.777},
-  url               = {https://link.aps.org/doi/10.1103/PhysRev.47.777},
-  html              = {https://journals.aps.org/pr/abstract/10.1103/PhysRev.47.777},
-  pdf               = {example_pdf.pdf},
-  altmetric         = {248277},
-  dimensions        = {true},
-  google_scholar_id = {qyhmnyLat1gC},
-  video             = {https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ},
-  additional_info   = {. *More Information* can be [found here](https://github.com/alshedivat/al-folio/)},
-  annotation        = {* Example use of superscripts<br>† Albert Einstein},
-  selected          = {true},
-  inspirehep_id     = {3255}
-}
-
-@article{einstein1905molekularkinetischen,
-  title     = {{\"U}ber die von der molekularkinetischen Theorie der W{\"a}rme geforderte Bewegung von in ruhenden Fl{\"u}ssigkeiten suspendierten Teilchen},
-  author    = {Einstein, A.},
-  journal   = {Annalen der physik},
-  volume    = {322},
-  number    = {8},
-  pages     = {549--560},
-  year      = {1905},
-  publisher = {Wiley Online Library}
-}
-
-@article{einstein1905movement,
-  abbr    = {Ann. Phys.},
-  title   = {Un the movement of small particles suspended in statiunary liquids required by the molecular-kinetic theory 0f heat},
-  author  = {Einstein, A.},
-  journal = {Ann. Phys.},
-  volume  = {17},
-  pages   = {549--560},
-  year    = {1905}
-}
-
-@article{einstein1905electrodynamics,
-  title  = {On the electrodynamics of moving bodies},
-  author = {Einstein, A.},
-  year   = {1905}
-}
-
-@article{einstein1905photoelectriceffect,
-  bibtex_show = {true},
-  abbr        = {Ann. Phys.},
-  title       = {{{\"U}ber einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt}},
-  author      = {Albert Einstein},
-  abstract    = {This is the abstract text.},
-  journal     = {Ann. Phys.},
-  volume      = {322},
-  number      = {6},
-  pages       = {132--148},
-  year        = {1905},
-  doi         = {10.1002/andp.19053220607},
-  award       = {Albert Einstein receveid the **Nobel Prize in Physics** 1921 *for his services to Theoretical Physics, and especially for his discovery of the law of the photoelectric effect*},
-  award_name  = {Nobel Prize}
-}
-
-@book{przibram1967letters,
-  bibtex_show = {true},
-  title       = {Letters on wave mechanics},
-  author      = {Einstein, Albert and Schrödinger, Erwin and Planck, Max and Lorentz, Hendrik Antoon and Przibram, Karl},
-  year        = {1967},
-  publisher   = {Vision},
-  preview     = {wave-mechanics.gif},
-  abbr        = {Vision}
+@article{liu2023dyslipidemia,
+  title={Development and validation of predictive model based on deep learning method for classification of dyslipidemia in Chinese medicine},
+  author={Jinlei Liu and Wenchao Dan and Xudong Liu and Xiaoxue Zhong and Cheng Chen and Qingyong He and Jie Wang},
+  journal={Health Information Science and Systems},
+  volume={11},
+  number={1},
+  pages={21},
+  year={2023},
+  month={Apr},
+  doi={10.1007/s13755-023-00215-0},
+  url={https://link.springer.com/article/10.1007/s13755-023-00215-0},
+  html={https://link.springer.com/article/10.1007/s13755-023-00215-0},
+  pdf={https://link.springer.com/content/pdf/10.1007/s13755-023-00215-0.pdf},
+  preview={chinese_doctor.png}
 }
