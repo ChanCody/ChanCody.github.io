@@ -17,7 +17,7 @@ At the core of the system is my Voronoi-diagram-based centerline extraction meth
 ## Demo
 
 <iframe
-  src="https://player.cloudinary.com/embed/?cloud_name=p6fghypy&public_id=videos%2Fline_laser_3d"
+  src="https://player.cloudinary.com/embed/?cloud_name=p6fghypy&public_id=videos%2Fline_laser_3d&player%5Bshow_logo%5D=false"
   width="640"
   height="360"
   style="height: auto; width: 100%; aspect-ratio: 640 / 360;"
