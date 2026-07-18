@@ -2,14 +2,18 @@
 layout: about
 title: about
 permalink: /
-subtitle: 
+subtitle:
 
 profile:
   align: right
   image: chan_pic.jpg
   image_circular: false # crops the image to make it circular
-  # more_info: >
-  #   # <p>Huawei, Shanghai, China</p>
+  more_info: >
+    <div style="text-align: center;">
+      <a href="mailto:chancody@foxmail.com" aria-label="Email William Cody Chan" title="Email me">
+        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+      </a>
+    </div>
 
 selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false # includes social icons at the bottom of the page
