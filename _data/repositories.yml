@@ -3,6 +3,7 @@ github_users:
   - alshedivat
 
 github_repos:
+  - WiiliamC/flowise_builder
   - WiiliamC/EmojiText
   - WiiliamC/ImageEncryption
   - WiiliamC/AutoInput-for-CompuSyn

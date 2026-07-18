@@ -25,13 +25,15 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-Hello world!👋
+Hello world! 👋
 
-I'm a software engineer in [Huawei ADS](https://auto.huawei.com/cn/), Shanghai, China. Our team is focused on sensor fusion and localization for autonomous driving system (ADS).
+I'm an AI engineer at [Shanghai Ancient Books Publishing House](https://guji.com.cn/), specializing in OCR, LLMs, and agent orchestration. Our main product is [Huidian](https://www.gujidh.com/), an AI-powered platform for searching and studying ancient Chinese texts.
 
-In 2022, I graduated from Xi'an Jiaotong University and got my master's degree in Machinical Engineer. Under the guidance of Prof. [Xuesong Mei](https://ieeexplore.ieee.org/author/37544593200), my research focused on Machine Vision and optical 3D measurement.
+From 2022 to 2024, I worked as a software engineer on the [Huawei ADS](https://auto.huawei.com/cn/) team, focusing on SLAM for autonomous driving.
 
-Currently, I'm interested in all kinds of deep-learning related technologies, especially in autonomous driving, SLAM and 3D reconstruction. I hope that L4 autonomous driving comes true in the next decade.
+In 2022, I earned my master's degree in Mechanical Engineering from Xi'an Jiaotong University. Under the guidance of Prof. [Xuesong Mei](https://ieeexplore.ieee.org/author/37544593200), my research focused on machine vision and optical 3D measurement.
+
+In my spare time, I'm interested in AI and AR glasses, particularly eye-tracking technologies. I hope to see the kind of AR glasses depicted in science fiction become a reality in the future.
 
 <style>
   h2 a[href$="/news/"] {
