@@ -2,7 +2,7 @@
 layout: page
 title: Line-Laser 3D Measurement
 description: A self-developed hardware–software system for high-precision 3D reconstruction
-img: assets/img/publication_preview/voronoi_preview.png
+img: assets/img/laser_3d_cover.png
 importance: 1
 category: work
 related_publications: true
