@@ -46,16 +46,17 @@ test("mobile navbar can expand/collapse", async ({ page }, testInfo) => {
   await expect(nav).not.toHaveClass(/show/);
 });
 
-test("repositories page renders external stat cards with deterministic fixtures", async ({ page }) => {
-  await preparePage(page, "light");
+test("repositories page loads committed static cards for both themes", async ({ page }) => {
+  await preparePage(page, "light", { stubLocalRepositoryCards: false });
   await page.goto("/al-folio/repositories/", { waitUntil: "networkidle" });
   await stabilizeVisuals(page);
 
-  const repoImages = page.locator('img[src*="github-readme-stats"], img[src*="github-profile-trophy"]');
+  const repoImages = page.locator('img[src*="/assets/img/repositories/"]');
+  await expect(repoImages).toHaveCount(10);
   await expect(repoImages.first()).toBeVisible();
 
   const renderedCount = await repoImages.evaluateAll((images) => images.filter((img) => img.complete && img.naturalWidth > 0).length);
-  expect(renderedCount).toBeGreaterThan(0);
+  expect(renderedCount).toBe(10);
 });
 
 test("blog pagination uses core Tailwind-native styling contract", async ({ page }) => {

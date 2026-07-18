@@ -1,0 +1,120 @@
+name: Update repository cards
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - ".github/workflows/update-repository-cards.yml"
+      - "_data/repositories.yml"
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repository-cards-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate flowise_builder light card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=flowise_builder&theme=default&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-flowise-builder-light.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate flowise_builder dark card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=flowise_builder&theme=dark&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-flowise-builder-dark.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate EmojiText light card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=EmojiText&theme=default&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-emojitext-light.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate EmojiText dark card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=EmojiText&theme=dark&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-emojitext-dark.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate ImageEncryption light card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=ImageEncryption&theme=default&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-imageencryption-light.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate ImageEncryption dark card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=ImageEncryption&theme=dark&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-imageencryption-dark.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate AutoInput-for-CompuSyn light card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=AutoInput-for-CompuSyn&theme=default&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-autoinput-for-compusyn-light.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate AutoInput-for-CompuSyn dark card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=AutoInput-for-CompuSyn&theme=dark&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-autoinput-for-compusyn-dark.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Classification-of-Breast-Cancer light card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=Classification-of-Breast-Cancer&theme=default&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-classification-of-breast-cancer-light.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Classification-of-Breast-Cancer dark card
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448
+        with:
+          card: pin
+          options: username=WiiliamC&repo=Classification-of-Breast-Cancer&theme=dark&locale=en&show_owner=true&description_lines_count=2
+          path: assets/img/repositories/wiiliamc-classification-of-breast-cancer-dark.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit updated cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- assets/img/repositories/*.svg
+          if git diff --cached --quiet; then
+            echo "Repository cards are already current."
+            exit 0
+          fi
+          git commit -m "chore: update repository cards"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

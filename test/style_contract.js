@@ -1,11 +1,17 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const crypto = require("node:crypto");
 
 const root = process.cwd();
 
 const read = (relPath) => fs.readFileSync(path.join(root, relPath), "utf8");
 const exists = (relPath) => fs.existsSync(path.join(root, relPath));
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const listFiles = (relPath) =>
+  fs.readdirSync(path.join(root, relPath), { withFileTypes: true }).flatMap((entry) => {
+    const entryPath = path.join(relPath, entry.name);
+    return entry.isDirectory() ? listFiles(entryPath) : [entryPath];
+  });
 
 const failures = [];
 
@@ -61,7 +67,23 @@ if (/gem 'al_math',\s*:git =>/.test(gemfile)) {
   failures.push("`Gemfile` must not use git-branch pin for `al_math`; use released gem version.");
 }
 
-for (const forbiddenPath of ["_includes", "_layouts", "_sass", "_scripts", "assets/tailwind", "tailwind.config.js", "assets/webfonts"]) {
+const overrideManifest = exists(".al-folio-overrides.yml") ? read(".al-folio-overrides.yml") : "";
+for (const overridePath of ["_includes", "_layouts", "_sass"]) {
+  if (!exists(overridePath)) {
+    continue;
+  }
+
+  for (const localPath of listFiles(overridePath)) {
+    const manifestEntry = new RegExp(`^  ${escapeRegExp(localPath)}:\\s*$([\\s\\S]*?)(?=^  \\S|(?![\\s\\S]))`, "m").exec(overrideManifest);
+    const acknowledgedSha = manifestEntry?.[1].match(/^    local_sha256:\s*([a-f0-9]{64})\s*$/m)?.[1];
+    const localSha = crypto.createHash("sha256").update(read(localPath)).digest("hex");
+    if (acknowledgedSha !== localSha) {
+      failures.push(`Local override \`${localPath}\` must be acknowledged with \`al-folio upgrade overrides accept\`.`);
+    }
+  }
+}
+
+for (const forbiddenPath of ["_scripts", "assets/tailwind", "tailwind.config.js", "assets/webfonts"]) {
   if (exists(forbiddenPath)) {
     failures.push(`Starter must not own core component path \`${forbiddenPath}\`; move ownership to the corresponding gem.`);
   }

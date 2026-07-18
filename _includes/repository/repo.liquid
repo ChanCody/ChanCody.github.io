@@ -1,0 +1,11 @@
+{% assign card_slug = include.repository | downcase | replace: '/', '-' | replace: '_', '-' %}
+{% assign card_path_prefix = '/assets/img/repositories/' | append: card_slug %}
+{% assign light_card_path = card_path_prefix | append: '-light.svg' %}
+{% assign dark_card_path = card_path_prefix | append: '-dark.svg' %}
+
+<div class="repo p-2 text-center">
+  <a href="https://github.com/{{ include.repository }}">
+    <img class="only-light w-100" alt="{{ include.repository }}" src="{{ light_card_path | relative_url }}">
+    <img class="only-dark w-100" alt="{{ include.repository }}" src="{{ dark_card_path | relative_url }}">
+  </a>
+</div>

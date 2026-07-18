@@ -5,7 +5,8 @@ const pixelmatch = pixelmatchModule.default || pixelmatchModule;
 const REPO_STATS_STUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="180" viewBox="0 0 400 180"><rect width="400" height="180" fill="#f3f4f6"/><rect x="8" y="8" width="384" height="164" rx="8" fill="#ffffff" stroke="#d1d5db"/><text x="20" y="42" font-size="20" font-family="Arial, sans-serif" fill="#111827">Repository Stats (stub)</text><text x="20" y="76" font-size="14" font-family="Arial, sans-serif" fill="#6b7280">Deterministic fixture for visual parity</text></svg>`;
 const REPO_TROPHY_STUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="180" viewBox="0 0 400 180"><rect width="400" height="180" fill="#111827"/><rect x="8" y="8" width="384" height="164" rx="8" fill="#1f2937" stroke="#374151"/><text x="20" y="42" font-size="20" font-family="Arial, sans-serif" fill="#f9fafb">Repository Trophies (stub)</text><text x="20" y="76" font-size="14" font-family="Arial, sans-serif" fill="#d1d5db">Deterministic fixture for visual parity</text></svg>`;
 
-async function applyNetworkStubs(page) {
+async function applyNetworkStubs(page, options = {}) {
+  const stubLocalRepositoryCards = options.stubLocalRepositoryCards !== false;
   const matchesBlockedHost = (requestUrl) => {
     const blockedDomains = ["google-analytics.com", "plausible.io", "badge.dimensions.ai"];
     try {
@@ -18,7 +19,7 @@ async function applyNetworkStubs(page) {
 
   await page.route("**/*", (route) => {
     const url = route.request().url();
-    if (url.includes("github-readme-stats.vercel.app")) {
+    if (url.includes("github-readme-stats.vercel.app") || (stubLocalRepositoryCards && url.includes("/assets/img/repositories/"))) {
       route.fulfill({
         status: 200,
         contentType: "image/svg+xml",
@@ -42,11 +43,11 @@ async function applyNetworkStubs(page) {
   });
 }
 
-async function preparePage(page, themeSetting = "light") {
+async function preparePage(page, themeSetting = "light", options = {}) {
   await page.addInitScript((setting) => {
     window.localStorage.setItem("theme", setting);
   }, themeSetting);
-  await applyNetworkStubs(page);
+  await applyNetworkStubs(page, options);
 }
 
 async function stabilizeVisuals(page) {

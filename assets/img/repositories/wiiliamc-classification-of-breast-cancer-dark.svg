@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="180" viewBox="0 0 400 180" role="img" aria-labelledby="title description">
+  <title id="title">WiiliamC/Classification-of-Breast-Cancer</title>
+  <desc id="description">Static GitHub repository card updated daily by GitHub Actions.</desc>
+  <rect x="0.5" y="0.5" width="399" height="179" rx="8" fill="#151515" stroke="#444c56"/>
+  <text x="24" y="48" fill="#79b8ff" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="18" font-weight="600">Classification-of-Breast-Cancer</text>
+  <text x="24" y="78" fill="#c9d1d9" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">WiiliamC</text>
+  <text x="24" y="112" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">Repository statistics update automatically every day.</text>
+  <circle cx="28" cy="146" r="6" fill="#3572a5"/>
+  <text x="42" y="150" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">GitHub repository</text>
+</svg>

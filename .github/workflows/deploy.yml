@@ -55,6 +55,14 @@ on:
       - "!docs/FAQ.md"
       - "!docs/INSTALL.md"
       - "!README.md"
+  workflow_run:
+    workflows:
+      - Update repository cards
+    types:
+      - completed
+    branches:
+      - master
+      - main
   workflow_dispatch:
 
 permissions:
@@ -62,6 +70,7 @@ permissions:
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     # available images: https://github.com/actions/runner-images#available-images
     runs-on: ubuntu-latest
     steps:
