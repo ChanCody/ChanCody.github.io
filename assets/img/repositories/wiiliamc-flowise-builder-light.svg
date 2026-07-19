@@ -114,7 +114,7 @@
     
 
     <text class="description" x="25" y="-5"> 
-      <tspan dy="1.2em" x="25">No description provided</tspan>
+      <tspan dy="1.2em" x="25">An agent-oriented TypeScript CLI for safely building and</tspan><tspan dy="1.2em" x="25">managing Flowise Agentflow V2 workflows from YAML or...</tspan>
     </text>
 
     <g transform="translate(30, 65)">
