@@ -1,15 +1,16 @@
 ---
 layout: page
-title: Glances AR Glasses
+title: Glances are all you need.
 description: High-precision eye tracking on low-cost hardware, powered by our custom GlanceNet model
+img: assets/img/glances_hero_cover.jpg
 permalink: /projects/glances/
 importance: 2
 category: work
 ---
 
-What if interacting with a screen started with simply looking at it? **Glances (览司)** brings a large virtual display and binocular eye tracking together in AR glasses, making your gaze part of the interface. Look to move the cursor or highlight a target, then use gestures, touch, or voice to take action.
+Mixed reality devices such as Apple Vision Pro have demonstrated a new way to interact: **Gaze-and-Pinch**—look at what you want, then pinch to act. We believe this will become the primary mode of human–computer interaction. Yet limitations in eye-tracking algorithms keep the hardware costly and bulky, leaving almost all lightweight AR glasses on the market without eye-tracking interaction.
 
-We're building toward an experience where looking, choosing, and acting flow naturally together—from playing a game to working with an AI assistant. Glances starts with a simple idea: the screen in front of your eyes should understand where your attention goes.
+**Glances (览司)** addresses this with **GlanceNet**, our in-house eye-tracking model. It achieves **0.5° gaze accuracy on compact, low-cost hardware**, putting its performance among the industry's best and bringing precise eye-tracking interaction to lightweight AR glasses.
 
 ## Demos
 
@@ -32,23 +33,11 @@ We're building toward an experience where looking, choosing, and acting flow nat
   </figure>
 </div>
 
-## Core Technology
+## What's Next
 
-At the heart of Glances is **GlanceNet**, our custom multimodal eye-tracking model. Inspired by advances in autonomous driving, it brings **high-precision gaze estimation to low-cost hardware**. We develop the model and hardware together, using advances in algorithms to get more out of a compact, accessible sensing setup.
+We're building toward the first AR glasses equipped with eye-tracking interaction, with a roadmap toward **wireless glasses with waveguide optics**. Our goal is to make gaze-based interaction part of everyday life in a form you can comfortably wear throughout the day.
 
-Our dedicated eye-tracking dataset spans different scenarios and contains approximately **8 million samples**, giving us a foundation for developing and refining GlanceNet. Rapid calibration connects gaze estimates to on-screen interaction, while the integrated sensing and inference pipeline brings the whole experience to life.
-
-## From Model to Working Prototype
-
-Our prototype achieves an eye-tracking error of approximately **0.5° on low-cost hardware** using GlanceNet. It's an exciting step toward bringing precise gaze interaction into everyday AR glasses—and the foundation for the hands-on demos above.
-
-## Applications
-
-Eye tracking opens up new ways to play, communicate intent, and get things done. Our prototype demos bring three of those possibilities to life:
-
-- **Gaze-controlled games:** make looking part of the action, with eye movements adding a new dimension to gameplay.
-- **Gaze-aware agents:** give an AI assistant a clue to what you mean by showing it where you're looking.
-- **Gaze-assisted productivity:** pair the directness of gaze with the expressiveness of voice to interact with on-screen content.
+Ultimately, Glances will become **a single interface for the devices around you**. The same Gaze-and-Pinch interaction will let you control PCs, tablets, smart home devices, and more—one consistent way to interact across screens and environments.
 
 <style>
   .glances-demos {
