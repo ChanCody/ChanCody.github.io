@@ -113,8 +113,8 @@
           
     
 
-    <text class="description" x="25" y="-5">
-      <tspan dy="1.2em" x="25">No description provided</tspan>
+    <text class="description" x="25" y="-5"> 
+      <tspan dy="1.2em" x="25">A collection of handy Linux scripts for system setup, SSH and</tspan><tspan dy="1.2em" x="25">network management, development environments, and...</tspan>
     </text>
 
     <g transform="translate(30, 65)">
