@@ -52,11 +52,14 @@ test("repositories page loads committed static cards for both themes", async ({ 
   await stabilizeVisuals(page);
 
   const repoImages = page.locator('img[src*="/assets/img/repositories/"]');
-  await expect(repoImages).toHaveCount(10);
+  await expect(repoImages).toHaveCount(12);
   await expect(repoImages.first()).toBeVisible();
+  const newRepo = page.locator('a[href="https://github.com/WiiliamC/ez_tools"]');
+  await expect(newRepo).toHaveCount(1);
+  await expect(newRepo.locator("img")).toHaveCount(2);
 
   const renderedCount = await repoImages.evaluateAll((images) => images.filter((img) => img.complete && img.naturalWidth > 0).length);
-  expect(renderedCount).toBe(10);
+  expect(renderedCount).toBe(12);
 });
 
 test("blog pagination uses core Tailwind-native styling contract", async ({ page }) => {
