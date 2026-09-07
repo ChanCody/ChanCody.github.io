@@ -1,26 +1,75 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 preview_ip="0.0.0.0"
-if [[ "${1:-}" == "--rebuild" ]]; then
-  if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 [port: 1-65535] | --rebuild" >&2
-    exit 1
-  fi
-  exec bash "$repo_root/bin/build-site"
-fi
-preview_port="${1:-8086}"
 
-if [[ $# -gt 1 || ! "$preview_port" =~ ^[0-9]{1,5}$ ]]; then
-  echo "Usage: $0 [port: 1-65535] | --rebuild" >&2
+show_help() {
+  cat <<'HELP'
+Usage:
+  ./bin/preview [PORT]
+  ./bin/preview --restart [PORT]
+  ./bin/preview --stop [PORT]
+  ./bin/preview --rebuild
+  ./bin/preview -h | --help
+
+Commands:
+  [PORT]           Start a foreground preview, or reuse a running instance.
+  --restart [PORT] Recreate the preview to reload configuration or dependencies.
+  --stop [PORT]    Stop the preview. Succeeds even if no instance exists.
+  --rebuild        Run a clean production build into _site and exit.
+                   Does not stop or restart any preview.
+  -h, --help       Show this help and exit.
+
+Port:
+  Defaults to 8086. Valid range: 1-65535.
+  Different ports run independent previews for this repository.
+
+Preview:
+  Binds to 0.0.0.0; the site path follows _config.yml.
+  Content changes rebuild automatically; refresh your browser to see them.
+  A newly started preview streams logs; Ctrl+C stops that instance.
+  If already running, prints an access hint and exits successfully.
+  To reload configuration or dependencies, use --restart.
+
+Examples:
+  ./bin/preview
+  ./bin/preview 8087
+  ./bin/preview --restart
+  ./bin/preview --restart 8087
+  ./bin/preview --stop
+  ./bin/preview --stop 8087
+  ./bin/preview --rebuild
+HELP
+}
+
+usage_error() {
+  echo "$1" >&2
+  echo "Run './bin/preview --help' for usage." >&2
   exit 1
-fi
+}
+
+operation=start
+case "${1:-}" in
+  -h|--help)
+    [[ $# -eq 1 ]] || usage_error "Help must be used alone."
+    show_help
+    exit 0
+    ;;
+  --rebuild)
+    [[ $# -eq 1 ]] || usage_error "--rebuild does not accept additional arguments."
+    exec bash "$repo_root/bin/build-site"
+    ;;
+  --restart|--stop)
+    operation="${1#--}"
+    shift
+    ;;
+esac
+[[ $# -le 1 ]] || usage_error "Too many arguments."
+preview_port="${1:-8086}"
+[[ "$preview_port" =~ ^[0-9]{1,5}$ ]] || usage_error "Expected a port between 1 and 65535; received: $preview_port"
 preview_port=$((10#$preview_port))
-if ((preview_port < 1 || preview_port > 65535)); then
-  echo "Port must be between 1 and 65535." >&2
-  exit 1
-fi
+((preview_port >= 1 && preview_port <= 65535)) || usage_error "Port must be between 1 and 65535."
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "Docker is required to start the local preview." >&2
@@ -37,11 +86,108 @@ if ! docker info >/dev/null 2>&1; then
   "${docker_command[@]}" info >/dev/null
 fi
 
-echo "Starting preview on ${preview_ip}:${preview_port}; site path follows _config.yml."
-echo "Content changes rebuild automatically; refresh the browser to see them."
-echo "After config or dependency changes, restart preview. Use --rebuild for a clean production build."
+if command -v sha256sum >/dev/null 2>&1; then
+  identity=$(printf '%s\0%s' "$repo_root" "$preview_port" | sha256sum)
+else
+  identity=$(printf '%s\0%s' "$repo_root" "$preview_port" | shasum -a 256)
+fi
+container_name="al-folio-preview-${identity%% *}"
+label_prefix="io.al-folio.preview"
+container_id=""
+container_state=""
 
-exec "${docker_command[@]}" run --rm --init \
+# Resolve by name, then use immutable IDs for all subsequent operations.
+lookup_instance() {
+  container_id=$("${docker_command[@]}" container ls --all --quiet --no-trunc --filter "name=^/${container_name}$")
+  container_state=""
+  [[ -n "$container_id" ]] || return 0
+  local ownership
+  ownership=$("${docker_command[@]}" container inspect --format \
+    "{{index .Config.Labels \"$label_prefix.purpose\"}}|{{index .Config.Labels \"$label_prefix.repo\"}}|{{index .Config.Labels \"$label_prefix.port\"}}" "$container_id") || return 1
+  if [[ "$ownership" != "preview|$repo_root|$preview_port" ]]; then
+    echo "Container $container_name belongs to another owner; refusing to modify it." >&2
+    return 1
+  fi
+  container_state=$("${docker_command[@]}" container inspect --format '{{.State.Status}}' "$container_id")
+}
+
+remove_instance() {
+  local target="$1"
+  local state
+  # A previous stop or --rm may already have removed this exact instance.
+  if ! state=$("${docker_command[@]}" container inspect --format '{{.State.Status}}' "$target" 2>/dev/null); then
+    "${docker_command[@]}" info >/dev/null
+    return
+  fi
+  if [[ "$state" == paused ]]; then
+    "${docker_command[@]}" container unpause "$target" >/dev/null || return 1
+  fi
+  # --rm may remove the container as soon as stop completes.
+  if ! "${docker_command[@]}" container stop "$target" >/dev/null 2>&1; then
+    if ! "${docker_command[@]}" container inspect "$target" >/dev/null 2>&1; then
+      "${docker_command[@]}" info >/dev/null
+      return
+    fi
+    return 1
+  fi
+  if ! "${docker_command[@]}" container rm "$target" >/dev/null 2>&1; then
+    if "${docker_command[@]}" container inspect "$target" >/dev/null 2>&1; then
+      echo "Could not remove preview container $target." >&2
+      return 1
+    fi
+    "${docker_command[@]}" info >/dev/null
+  fi
+}
+
+access_hint() {
+  echo "Preview instance is running on port $preview_port; open http://localhost:$preview_port/ with the site path from _config.yml."
+  echo "The initial build may still be running; check logs in the original terminal."
+}
+
+lookup_instance
+if [[ "$operation" == stop ]]; then
+  if [[ -n "$container_id" ]]; then
+    remove_instance "$container_id"
+    echo "Stopped preview on port $preview_port."
+  else
+    echo "No preview exists for this repository on port $preview_port."
+  fi
+  exit 0
+fi
+if [[ -n "$container_id" ]]; then
+  if [[ "$operation" == restart ]]; then
+    remove_instance "$container_id"
+  else
+    case "$container_state" in
+      running) access_hint; exit 0 ;;
+      exited|dead) remove_instance "$container_id" ;;
+      *)
+        echo "Preview is in state '$container_state'. Use ./bin/preview --restart $preview_port to recover." >&2
+        exit 1
+        ;;
+    esac
+  fi
+fi
+
+# Create separately so cleanup always owns an exact ID, even if starting fails.
+owned_id=""
+cleanup() {
+  local status=$?
+  trap - EXIT INT TERM
+  if [[ -n "$owned_id" ]]; then
+    remove_instance "$owned_id" || status=1
+  fi
+  exit "$status"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+if ! owned_id=$("${docker_command[@]}" create --rm --init \
+  --name "$container_name" \
+  --label "$label_prefix.purpose=preview" \
+  --label "$label_prefix.repo=$repo_root" \
+  --label "$label_prefix.port=$preview_port" \
   -p "${preview_ip}:${preview_port}:8080" \
   -v "${repo_root}:/srv/jekyll:ro" \
   -e BUNDLE_FROZEN=true \
@@ -55,4 +201,28 @@ exec "${docker_command[@]}" run --rm --init \
       --host="$PREVIEW_IP" \
       --port=8080 \
       --watch \
-      --force_polling'
+      --force_polling'); then
+  owned_id=""
+  lookup_instance
+  if [[ "$container_state" == running ]]; then
+    access_hint
+    exit 0
+  fi
+  echo "Could not create preview. Another startup may be in progress; inspect its terminal or use --restart $preview_port." >&2
+  exit 1
+fi
+
+echo "Starting preview on ${preview_ip}:${preview_port}; site path follows _config.yml."
+echo "Content changes rebuild automatically; refresh the browser to see them."
+echo "After config or dependency changes, use --restart. Use --rebuild for a clean production build."
+
+# Waiting on a child lets Bash handle Ctrl+C/SIGTERM promptly.
+"${docker_command[@]}" start --attach "$owned_id" &
+preview_client=$!
+if wait "$preview_client"; then
+  exit 0
+else
+  status=$?
+  echo "Preview exited with status $status. If the port is occupied by another service, try ./bin/preview with a different port." >&2
+  exit "$status"
+fi

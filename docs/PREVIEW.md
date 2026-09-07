@@ -7,7 +7,48 @@ from another device.
 
 Content changes automatically rebuild through polling; refresh the browser to
 see the result. Restart the preview after configuration or dependency changes.
-Ctrl+C stops the preview container.
+Ctrl+C stops the preview container started by that terminal. Running the same
+command again reuses the running instance, prints an access hint, and exits;
+it does not attach to its logs or wait for the initial build to finish. Check
+the original terminal for build progress.
+
+Run `./bin/preview --help` (or `-h`) for all commands and examples. Help works
+without Docker. Commands that accept a port default to 8086:
+
+```bash
+./bin/preview                  # Start or reuse the default preview
+./bin/preview 8087             # Start or reuse an independent preview
+./bin/preview --restart        # Recreate the default preview in the foreground
+./bin/preview --restart 8087    # Recreate only the preview on port 8087
+./bin/preview --stop           # Stop the default preview; safe to repeat
+./bin/preview --stop 8087      # Stop only the preview on port 8087
+```
+
+Use `--restart` after changing `_config.yml` or dependencies. It stops and
+removes the selected preview, then creates a new container; if none exists,
+it starts one. Previews are identified by the repository's physical absolute
+path and port, so different repositories and ports are managed independently.
+A restart from another terminal ends the old foreground session; its cleanup
+cannot stop the replacement container.
+
+A running instance is reused even if the initial site build is still underway.
+If an instance is stuck during startup or in an abnormal state, inspect the
+original terminal and use `--restart` to recover. Containers belonging to other
+owners are never automatically stopped, and occupied ports are not automatically
+changed. Use another port explicitly when you need concurrent previews.
+
+Older versions of this script created randomly named containers. These are not
+automatically adopted or stopped. If an old preview still occupies your port,
+list running containers and inspect the host-port mapping:
+
+```bash
+docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Ports}}'
+```
+
+After confirming the container is your old preview (for example, its mapping
+includes `0.0.0.0:8086->8080/tcp`), run `docker stop <container-ID>` and retry.
+Use `sudo docker` if your Docker setup requires it. The container named in a
+failed startup error is not necessarily the container occupying the port.
 
 Run `./bin/preview --rebuild` to build production output into `_site` and exit.
 It neither starts a server nor stops an existing preview. This delegates to
