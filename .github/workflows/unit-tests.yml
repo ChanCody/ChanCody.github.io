@@ -16,6 +16,8 @@ on:
       - "_projects/**"
       - "assets/**"
       - "test/**"
+      - "bin/update_scholar_citations.py"
+      - "bin/commit-citations"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/unit-tests.yml"
@@ -34,6 +36,8 @@ on:
       - "_projects/**"
       - "assets/**"
       - "test/**"
+      - "bin/update_scholar_citations.py"
+      - "bin/commit-citations"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/unit-tests.yml"
@@ -74,20 +78,19 @@ jobs:
           sudo apt-get update && sudo apt-get install -y imagemagick
           pip3 install --upgrade nbconvert
 
-      - name: Run comments integration test 🧪
-        run: bash test/integration_comments.sh
+      - name: Run Scholar regression tests
+        run: |
+          pip3 install pyyaml
+          python3 -m unittest discover -s test -p 'test_scholar_citations.py' -v
+          python3 test/integration_citation_commit.py
 
-      - name: Run plugin toggle integration test 🔌
-        run: bash test/integration_plugin_toggles.sh
+      - name: Run all integration tests
+        run: bash test/run_integration.sh
 
-      - name: Run distill integration test 📄
-        run: bash test/integration_distill.sh
-
-      - name: Run bootstrap compatibility integration test 🧩
-        run: bash test/integration_bootstrap_compat.sh
-
-      - name: Run upgrade CLI integration test ⬆️
-        run: bash test/integration_upgrade_cli.sh
-
-      - name: Run CSS minify integration test 🎨
-        run: bash test/integration_css_minify.sh
+      - name: Upload integration logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-logs
+          path: test-results/integration/
+          if-no-files-found: ignore

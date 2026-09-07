@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+branch="${GITHUB_REF_NAME:-$(git branch --show-current)}"
+git check-ref-format "refs/heads/${branch}"
+if [[ ! -f _data/citations.yml ]]; then
+  echo "Citation update did not produce _data/citations.yml" >&2
+  exit 1
+fi
+if ! git diff --cached --quiet; then
+  echo "Refusing to include unrelated staged changes in the citation commit" >&2
+  exit 1
+fi
+git add -- _data/citations.yml
+if git diff --cached --quiet; then
+  echo "Citation data is unchanged."
+  exit 0
+fi
+git commit -m "chore: update Google Scholar citations"
+git pull --rebase origin "${branch}"
+git push origin "HEAD:${branch}"

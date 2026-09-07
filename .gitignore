@@ -15,6 +15,7 @@ assets/video/line_laser_3d.mp4
 assets/video/line_laser_3d_95m.mp4
 al-folio-upgrade-report.md
 node_modules/
+__pycache__/
 output/playwright/
 test-results/
 vendor
