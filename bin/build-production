@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Container-only production recipe. stdout is reserved for the artifact archive.
+set -euo pipefail
+
+cd /work
+{
+  bundler_version="$(awk '/^BUNDLED WITH$/{getline; gsub(/ /, ""); print}' Gemfile.lock)"
+  [[ -n "$bundler_version" ]]
+  gem install --no-document bundler --version "$bundler_version"
+  bundle "_${bundler_version}_" install --jobs 4 --retry 3
+  npm ci
+  ruby -ryaml -e '
+    path = "_config.yml"
+    config = YAML.load_file(path)
+    config["giscus"] ||= {}
+    config["giscus"]["repo"] = ENV.fetch("GITHUB_REPOSITORY")
+    File.write(path, YAML.dump(config))
+  '
+  bundle "_${bundler_version}_" exec jekyll build --disable-disk-cache
+  purgecss -c purgecss.config.js
+} >&2
+tar -cf - -C _site .

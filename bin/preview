@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+preview_ip="0.0.0.0"
+if [[ "${1:-}" == "--rebuild" ]]; then
+  if [[ $# -ne 1 ]]; then
+    echo "Usage: $0 [port: 1-65535] | --rebuild" >&2
+    exit 1
+  fi
+  exec bash "$repo_root/bin/build-site"
+fi
+preview_port="${1:-8086}"
+
+if [[ $# -gt 1 || ! "$preview_port" =~ ^[0-9]{1,5}$ ]]; then
+  echo "Usage: $0 [port: 1-65535] | --rebuild" >&2
+  exit 1
+fi
+preview_port=$((10#$preview_port))
+if ((preview_port < 1 || preview_port > 65535)); then
+  echo "Port must be between 1 and 65535." >&2
+  exit 1
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Docker is required to start the local preview." >&2
+  exit 1
+fi
+
+docker_command=(docker)
+if ! docker info >/dev/null 2>&1; then
+  if ! command -v sudo >/dev/null 2>&1; then
+    echo "Cannot access Docker. Check that it is running and your user has access." >&2
+    exit 1
+  fi
+  docker_command=(sudo docker)
+  "${docker_command[@]}" info >/dev/null
+fi
+
+echo "Starting preview on ${preview_ip}:${preview_port}; site path follows _config.yml."
+echo "Content changes rebuild automatically; refresh the browser to see them."
+echo "After config or dependency changes, restart preview. Use --rebuild for a clean production build."
+
+exec "${docker_command[@]}" run --rm --init \
+  -p "${preview_ip}:${preview_port}:8080" \
+  -v "${repo_root}:/srv/jekyll:ro" \
+  -e BUNDLE_FROZEN=true \
+  -e PREVIEW_IP="${preview_ip}" \
+  --entrypoint /bin/sh amirpourmand/al-folio:latest \
+  -c 'cd /srv/jekyll &&
+    bundle install --jobs 4 --retry 3 &&
+    exec bundle exec jekyll serve \
+      --destination=/tmp/glances-site \
+      --disable-disk-cache \
+      --host="$PREVIEW_IP" \
+      --port=8080 \
+      --watch \
+      --force_polling'

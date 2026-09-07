@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# The only production build entry point, for both CI and bin/preview --rebuild.
+set -euo pipefail
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+if [[ $# -ne 0 ]]; then
+  echo "Usage: $0" >&2
+  exit 1
+fi
+repository="${GITHUB_REPOSITORY:-}"
+if [[ -z "$repository" ]]; then
+  origin="$(git remote get-url origin)"
+  # Supports HTTPS, SSH URLs and SSH host aliases such as github-chancody.
+  repository="${origin##*:}"
+  if [[ "$origin" == *://* ]]; then
+    repository="${origin#*://}"
+    repository="${repository#*/}"
+  fi
+  repository="${repository%.git}"
+fi
+if [[ ! "$repository" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
+  echo "Cannot determine repository. Set GITHUB_REPOSITORY=owner/repo." >&2
+  exit 1
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Docker is required for the production build." >&2
+  exit 1
+fi
+docker_command=(docker)
+if ! docker info >/dev/null 2>&1; then
+  if ! command -v sudo >/dev/null 2>&1; then
+    echo "Cannot access Docker. Check that it is running and your user has access." >&2
+    exit 1
+  fi
+  docker_command=(sudo docker)
+  "${docker_command[@]}" info >/dev/null
+fi
+
+temporary_dir="$(mktemp -d)"
+image_name="al-folio-production:build-$(basename "$temporary_dir" | tr '[:upper:]' '[:lower:]')"
+cleanup() {
+  "${docker_command[@]}" image rm "$image_name" >/dev/null 2>&1 || true
+  rm -rf -- "$temporary_dir"
+}
+trap cleanup EXIT
+
+# Include uncommitted and new content, but exclude ignored caches, dependencies
+# and old artifacts. Missing tracked files represent local deletions.
+git ls-files --cached --others --exclude-standard -z > "$temporary_dir/candidates"
+while IFS= read -r -d '' path; do
+  case "$path" in
+    _site/*|node_modules/*|vendor/*|.bundle/*|.jekyll-cache/*|.sass-cache/*|.tweet-cache/*|.jekyll-metadata) continue ;;
+  esac
+  if [[ -e "$path" || -L "$path" ]]; then
+    printf '%s\0' "$path"
+  fi
+done < "$temporary_dir/candidates" > "$temporary_dir/files"
+tar --null --verbatim-files-from -T "$temporary_dir/files" -cf "$temporary_dir/source.tar"
+
+echo "Building production site from clean state for $repository..." >&2
+"${docker_command[@]}" build --pull --no-cache \
+  -t "$image_name" - < bin/production.Dockerfile
+"${docker_command[@]}" run --rm --init \
+  -v "$temporary_dir:/input:ro" \
+  -e GITHUB_REPOSITORY="$repository" \
+  "$image_name" bash -c \
+  'tar -xf /input/source.tar -C /work && exec bash /work/bin/build-production' \
+  > "$temporary_dir/artifact.tar"
+
+mkdir "$temporary_dir/site"
+tar --no-same-owner -xf "$temporary_dir/artifact.tar" -C "$temporary_dir/site"
+if [[ -e _site || -L _site ]]; then
+  mv -- _site "$temporary_dir/previous-site"
+fi
+mv -- "$temporary_dir/site" _site
+echo "Production build complete: $repo_root/_site (no server started)."
