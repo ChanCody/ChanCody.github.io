@@ -1,3 +1,5 @@
+const { execFileSync } = require("node:child_process");
+const path = require("node:path");
 const { test, expect } = require("@playwright/test");
 const { preparePage, stabilizeVisuals } = require("./helpers");
 
@@ -46,21 +48,27 @@ test("mobile navbar can expand/collapse", async ({ page }, testInfo) => {
   await expect(nav).not.toHaveClass(/show/);
 });
 
-test("repositories page loads committed static cards for both themes", async ({ page }) => {
-  await preparePage(page, "light", { stubLocalRepositoryCards: false });
-  await page.goto("/al-folio/repositories/", { waitUntil: "networkidle" });
-  await stabilizeVisuals(page);
+for (const theme of ["light", "dark"]) {
+  test(`repositories page loads committed static cards in ${theme} theme`, async ({ page }) => {
+    const root = path.resolve(__dirname, "../..");
+    const { include: repositories } = JSON.parse(execFileSync("ruby", ["bin/repository-cards.rb", "matrix"], { cwd: root, encoding: "utf8" }));
+    await preparePage(page, theme, { stubLocalRepositoryCards: false });
+    await page.goto("/al-folio/repositories/", { waitUntil: "networkidle" });
+    await stabilizeVisuals(page);
 
-  const repoImages = page.locator('img[src*="/assets/img/repositories/"]');
-  await expect(repoImages).toHaveCount(12);
-  await expect(repoImages.first()).toBeVisible();
-  const newRepo = page.locator('a[href="https://github.com/WiiliamC/ez_tools"]');
-  await expect(newRepo).toHaveCount(1);
-  await expect(newRepo.locator("img")).toHaveCount(2);
-
-  const renderedCount = await repoImages.evaluateAll((images) => images.filter((img) => img.complete && img.naturalWidth > 0).length);
-  expect(renderedCount).toBe(12);
-});
+    const repoImages = page.locator('img[src*="/assets/img/repositories/"]');
+    await expect(repoImages).toHaveCount(repositories.length * 2);
+    for (const { owner, repo, slug } of repositories) {
+      const card = page.locator(`a[href="https://github.com/${owner}/${repo}"]`);
+      await expect(card).toHaveCount(1);
+      await expect(card.locator("img")).toHaveCount(2);
+      const visibleImage = card.locator(`img.only-${theme}`);
+      await expect(visibleImage).toBeVisible();
+      await expect(visibleImage).toHaveAttribute("src", `/al-folio/assets/img/repositories/${slug}-${theme}.svg`);
+      await expect.poll(() => visibleImage.evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
+    }
+  });
+}
 
 test("blog pagination uses core Tailwind-native styling contract", async ({ page }) => {
   await preparePage(page, "light");

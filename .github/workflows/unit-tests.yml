@@ -16,6 +16,7 @@ on:
       - "_projects/**"
       - "assets/**"
       - "test/**"
+      - "bin/repository-cards.rb"
       - "bin/update_scholar_citations.py"
       - "bin/commit-citations"
       - "package.json"
@@ -36,6 +37,7 @@ on:
       - "_projects/**"
       - "assets/**"
       - "test/**"
+      - "bin/repository-cards.rb"
       - "bin/update_scholar_citations.py"
       - "bin/commit-citations"
       - "package.json"
@@ -83,6 +85,9 @@ jobs:
           pip3 install pyyaml
           python3 -m unittest discover -s test -p 'test_scholar_citations.py' -v
           python3 test/integration_citation_commit.py
+
+      - name: Check repository card inventory
+        run: bundle exec ruby test/test_repository_cards.rb
 
       - name: Run all integration tests
         run: bash test/run_integration.sh

@@ -392,11 +392,35 @@ Delete or comment out the [`.github/workflows/render-cv.yml`](../.github/workflo
 
 The user and repository information is defined in [\_data/repositories.yml](../_data/repositories.yml). You can add as many users and repositories as you want. Both informations are used in the `repositories` section.
 
+### Static repository cards
+
+This site's repository cards use committed SVGs. Add an `owner/repo` entry to
+`_data/repositories.yml`; the **Update repository cards** workflow reads that list
+and generates both light and dark cards with the existing card styles. It also
+runs daily and can be started manually. No separate workflow repository list is
+needed. Names are lowercased and `/` and `_` become `-` in filenames; conflicting
+names are rejected.
+
+The workflow commits cards only after every repository succeeds and the downloaded
+set covers the latest repository list. If generation fails, inspect that workflow's
+logs and rerun it after correcting the cause. A concurrent branch update may reject
+the final push; rerun against the updated branch in that case.
+
+Production builds check both source cards and the generated site. A list update
+can trigger a deployment before its cards are ready; that build fails the resource
+check and leaves the published site intact. A successful card update triggers a
+new deployment. To inspect missing or invalid cards locally, run:
+
+```bash
+ruby bin/repository-cards.rb check
+ruby bin/repository-cards.rb check . _site
+```
+
 ### Configuring external service URLs
 
-The repository page uses external services to display GitHub statistics and trophies. By default, these are:
+The upstream user statistics and trophy components support external services. The static repository cards described above do not load these services in the browser. Default service URLs are:
 
-- `github-readme-stats.vercel.app` for user stats and repository cards
+- `github-readme-stats.vercel.app` for user stats
 - `github-profile-trophy.vercel.app` for GitHub profile trophies
 
 **Important:** These default services are hosted by third parties and may not be available 100% of the time. For better reliability, privacy, and customization, you can self-host these services and configure your website to use your own instances.

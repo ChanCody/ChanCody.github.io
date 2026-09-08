@@ -16,7 +16,9 @@ cd /work
     config["giscus"]["repo"] = ENV.fetch("GITHUB_REPOSITORY")
     File.write(path, YAML.dump(config))
   '
+  ruby bin/repository-cards.rb check
   bundle "_${bundler_version}_" exec jekyll build --disable-disk-cache
   purgecss -c purgecss.config.js
+  ruby bin/repository-cards.rb check . _site
 } >&2
 tar -cf - -C _site .
