@@ -21,6 +21,9 @@ on:
       - "bin/commit-citations"
       - "package.json"
       - "package-lock.json"
+      - "requirements.txt"
+      - "requirements-scholar.txt"
+      - ".github/workflows/update-citations.yml"
       - ".github/workflows/unit-tests.yml"
   pull_request:
     branches:
@@ -42,6 +45,9 @@ on:
       - "bin/commit-citations"
       - "package.json"
       - "package-lock.json"
+      - "requirements.txt"
+      - "requirements-scholar.txt"
+      - ".github/workflows/update-citations.yml"
       - ".github/workflows/unit-tests.yml"
 
 jobs:
@@ -62,6 +68,9 @@ jobs:
         with:
           python-version: "3.13"
           cache: "pip"
+          cache-dependency-path: |
+            requirements.txt
+            requirements-scholar.txt
 
       - name: Setup Node 🧰
         uses: actions/setup-node@v4
@@ -82,7 +91,8 @@ jobs:
 
       - name: Run Scholar regression tests
         run: |
-          pip3 install pyyaml
+          python3 -m pip install -r requirements-scholar.txt
+          python3 -c "from scholarly import scholarly; from bibtexparser.bibdatabase import BibDatabase"
           python3 -m unittest discover -s test -p 'test_scholar_citations.py' -v
           python3 test/integration_citation_commit.py
 

@@ -27,9 +27,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: requirements-scholar.txt
 
       - name: Install dependencies
-        run: pip install pyyaml scholarly
+        run: python -m pip install -r requirements-scholar.txt
+
+      - name: Check Scholar imports
+        run: python -c "from scholarly import scholarly; from bibtexparser.bibdatabase import BibDatabase"
 
       - name: Run citation update script
         run: |
