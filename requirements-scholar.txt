@@ -1,0 +1,4 @@
+pyyaml
+scholarly
+# scholarly imports bibtexparser.bibdatabase, which requires the v1 API.
+bibtexparser>=1.4.3,<2
