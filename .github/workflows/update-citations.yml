@@ -1,10 +1,7 @@
 name: Update Google Scholar Citations
 
 on:
-  schedule:
-    - cron: "0 0 * * 1" # Monday
-    - cron: "0 0 * * 3" # Wednesday
-    - cron: "0 0 * * 5" # Friday
+  # Restore scheduled updates after configuring your own Scholar profile and publication IDs.
   workflow_dispatch:
 
 permissions:
